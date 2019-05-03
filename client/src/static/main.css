@@ -113,6 +113,14 @@ div.block {
     cursor: pointer;
 }
 
+.block.attend {
+    background: #1d6ce4;
+    color: #fff;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .buttons-wrap > .balloon {
     padding: 0;
 }
