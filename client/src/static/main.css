@@ -33,6 +33,7 @@ body > div {
     flex-direction: column-reverse;
     width: 100%;
     z-index: 1;
+    overflow-y: scroll;
 }
 
 .balloons-wrap > .balloon {
