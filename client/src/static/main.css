@@ -56,12 +56,14 @@ div.block {
     padding: 10px 20px;
     font-weight: 900;
     font-family: arial;
+    min-height: min-content;
 }
 
 .balloon {
     flex: 1;
     display: flex;
     padding: 0 30px;
+    min-height: min-content;
 }
 
 .balloon > .block {
