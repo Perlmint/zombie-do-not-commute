@@ -86,8 +86,7 @@ div.block {
 }
 
 .balloon.right {
-    justify-content: right;
-    -webkit-justify-content: right;
+    flex-direction: row-reverse;
 }
 
 .balloon.left > .block:before {
@@ -104,8 +103,7 @@ div.block {
 }
 
 .balloon.left {
-    justify-content: left;
-    -webkit-justify-content: left;
+    flex-direction: row;
 }
 
 #growl-button {
