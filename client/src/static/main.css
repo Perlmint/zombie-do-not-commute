@@ -110,6 +110,7 @@ div.block {
     background: #00bf20;
     color: #fff;
     margin-right: 1ex;
+    cursor: pointer;
 }
 
 .buttons-wrap > .balloon {
