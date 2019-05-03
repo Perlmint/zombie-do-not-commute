@@ -1,0 +1,9 @@
+[package]
+name = "zombie_do_not_commute_client"
+version = "0.1.0"
+authors = ["Gyusun Yeom <omniavinco@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+yew = "0.6.0"
+stdweb = "*"
