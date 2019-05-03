@@ -36,7 +36,7 @@ impl Component for Balloon {
         Balloon { props: props }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _: Self::Message) -> ShouldRender {
         true
     }
 

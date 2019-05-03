@@ -2,7 +2,7 @@ mod balloon;
 
 use balloon::{Balloon, BalloonSide};
 use std::collections::VecDeque;
-use std::ops::{Add, Drop};
+use std::ops::Add;
 use std::time::Duration;
 use stdweb::web::Date;
 use yew::services::{IntervalService, Task};
