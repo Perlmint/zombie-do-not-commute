@@ -1,0 +1,134 @@
+html {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    height: 100%;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body > div {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.buttons-wrap {
+    display: flex;
+    flex-direction: row-reverse;
+    width: 100%;
+    z-index: 100;
+}
+
+.balloons-wrap {
+    display: flex;
+    flex-direction: column-reverse;
+    width: 100%;
+    z-index: 1;
+    overflow-y: scroll;
+}
+
+.balloons-wrap > .balloon {
+    mix-blend-mode: hard-light;
+}
+
+.balloons-wrap:after {
+    background: linear-gradient(white, transparent);
+    position: absolute;
+    content: "";
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%
+}
+
+div.block {
+    margin: 2px 10px;
+    border-radius: 15px;
+    padding: 10px 20px;
+    font-weight: 900;
+    font-family: arial;
+    min-height: min-content;
+}
+
+.balloon {
+    flex: 1;
+    display: flex;
+    padding: 0 30px;
+    min-height: min-content;
+}
+
+.balloon > .block {
+    background: #00bfb6;
+    color: #fff;
+    position: relative;
+}
+
+.balloon.right > .block:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 15px solid #00bfb6;
+    border-right: 15px solid transparent;
+    border-top: 15px solid #00bfb6;
+    border-bottom: 15px solid transparent;
+    right: -16px;
+    top: 0px;
+}
+
+.balloon.right {
+    flex-direction: row-reverse;
+}
+
+.balloon.left > .block:before {
+    content: "";
+    width: 0px;
+    height: 0px;
+    position: absolute;
+    border-left: 15px solid transparent;
+    border-right: 15px solid #00bfb6;
+    border-top: 15px solid #00bfb6;
+    border-bottom: 15px solid transparent;
+    left: -16px;
+    top: 0px;
+}
+
+.balloon.left {
+    flex-direction: row;
+}
+
+#growl-button {
+    background: #00bf20;
+    color: #fff;
+    margin-right: 1ex;
+    cursor: pointer;
+}
+
+.block.attend {
+    background: #1d6ce4;
+    color: #fff;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.buttons-wrap > .balloon {
+    padding: 0;
+}
+
+.buttons-wrap > .balloon > .block {
+    background: #00bf20;
+}
+.buttons-wrap > .balloon > .block:before {
+    border-left-color: #00bf20;
+    border-top-color: #00bf20;
+}
