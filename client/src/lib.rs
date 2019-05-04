@@ -129,6 +129,9 @@ impl Main {
             ret.push(html! {
                 <div
                     id="growl-button", class="block",
+                    onpointerdown=|_| Msg::GrowlDown,
+                    onpointerup=|_| Msg::GrowlUp,
+                    onpointerleave=|_| Msg::GrowlUp,
                     onmousedown=|_| Msg::GrowlDown,
                     onmouseup=|_| Msg::GrowlUp,
                     onmouseleave=|_| Msg::GrowlUp,
@@ -150,6 +153,9 @@ impl Main {
             ret.push(html! {
                 <div
                     class="attend block",
+                    onpointerdown=|_| Msg::AttendDown,
+                    onpointerup=|_| Msg::AttendUp,
+                    onpointerleave=|_| Msg::AttendUp,
                     onmousedown=|_| Msg::AttendDown,
                     onmouseup=|_| Msg::AttendUp,
                     onmouseleave=|_| Msg::AttendUp,
