@@ -18,7 +18,7 @@ interface IState {
     socket_err?: string;
 }
 
-const MESSAGE_COUNT = 20;
+const MESSAGE_COUNT = 30;
 const GROWL_INTERVAL = 100;
 
 function createGrowl(date: Date) {
