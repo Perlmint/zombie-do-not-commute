@@ -4,6 +4,7 @@ import update from "immutability-helper";
 import React from "react";
 import { render } from "react-dom";
 import Balloon, { BalloonSide, IBalloonProps } from "./balloon";
+import { Spinner } from "./spinner";
 import { pointerHandlerPolyfill } from "./util";
 
 interface IState {
@@ -13,6 +14,8 @@ interface IState {
     attend_down_at?: Date;
     intervalId?: any;
     intervalDummy: boolean;
+    socket?: WebSocket;
+    socket_err?: string;
 }
 
 const MESSAGE_COUNT = 20;
@@ -33,7 +36,28 @@ class Main extends React.Component<{}, IState> {
         };
     }
 
+    public componentDidMount() {
+        this.connect();
+    }
+
+    public componentWillUnmount() {
+        this.disconnect();
+    }
+
     public render() {
+        if (SERVER_URL !== undefined) {
+            if (this.state.socket_err !== undefined) {
+                return <div className="error-msg" onClick={this.onReconnectClick}>
+                    Failed to connect to server.<br/>
+                    ({ this.state.socket_err })<br/>
+                    Click here to retry connection.
+                </div>;
+            }
+            if (this.state.socket === undefined) {
+                return <Spinner />;
+            }
+        }
+
         return <React.Fragment>
             <div className="buttons-wrap" >
                 { this.renderButtonsArea() }
@@ -42,6 +66,57 @@ class Main extends React.Component<{}, IState> {
                 { this.state.messages.map((prop, idx) => <Balloon key={idx} {...prop} />) }
             </div>
         </React.Fragment>;
+    }
+
+    private connect() {
+        if (SERVER_URL === undefined) {
+            return;
+        }
+
+        if (this.state.socket !== undefined) {
+            return;
+        }
+        this.setState((state) => update(state, {
+            socket_err: {
+                $set: undefined,
+            },
+        }));
+
+        try {
+            const socket = new WebSocket(SERVER_URL);
+            this.setState((state) => update(state, {
+                socket: {
+                    $set: socket,
+                },
+            }));
+            socket.onmessage = this.onReceivceMessage;
+            socket.onclose = () => this.disconnect();
+        } catch (e) {
+            const err = e as Error;
+            this.setState((state) => update(state, {
+                socket_err: {
+                    $set: err.message,
+                },
+            }));
+        }
+    }
+    private disconnect() {
+        if (this.state.socket === undefined) {
+            return;
+        }
+
+        this.state.socket.close(1000, "Client close");
+        this.setState((state) => update(state, {
+            socket: {
+                $set: undefined,
+            },
+        }));
+    }
+    private onReconnectClick = () => {
+        this.connect();
+    }
+    private onReceivceMessage(_: MessageEvent) {
+        // TODO: process message
     }
 
     private onGrowlDown = () => {
@@ -53,7 +128,11 @@ class Main extends React.Component<{}, IState> {
     private onGrowlUp = () => {
         if (this.state.growl_down_at !== undefined) {
             clearInterval(this.state.intervalId);
-            this.pushMessage(createGrowl(this.state.growl_down_at), BalloonSide.Right);
+            const message = createGrowl(this.state.growl_down_at);
+            this.pushMessage(message, BalloonSide.Right);
+            if (SERVER_URL !== undefined) {
+                this.state.socket!.send(message);
+            }
             this.setState((state) => update(
                 state,
                 {
@@ -138,14 +217,16 @@ class Main extends React.Component<{}, IState> {
     private renderButtonsArea() {
         const ret: JSX.Element[] = [];
         if (this.state.attend_down_at === undefined && this.state.attended) {
-            ret.push(<div key="growl-button" id="growl-button" className="block"
-                    { ...pointerHandlerPolyfill({
-                        onPointerDown: this.onGrowlDown,
-                        onPointerLeave: this.onGrowlUp,
-                        onPointerUp: this.onGrowlUp,
-                    }) }
-                >그어어</div>,
-            );
+            ret.push(<div
+                key="growl-button"
+                id="growl-button"
+                className="block"
+                { ...pointerHandlerPolyfill({
+                    onPointerDown: this.onGrowlDown,
+                    onPointerLeave: this.onGrowlUp,
+                    onPointerUp: this.onGrowlUp,
+                }) }
+            >그어어</div>);
         }
 
         if (this.state.growl_down_at !== undefined) {
@@ -156,15 +237,14 @@ class Main extends React.Component<{}, IState> {
             />);
         } else {
             ret.push(<div
-                    key="attend-button"
-                    className="attend block"
-                    { ...pointerHandlerPolyfill({
-                        onPointerDown: this.onAttendDown,
-                        onPointerLeave: this.onAttendUp,
-                        onPointerUp: this.onAttendUp,
-                    }) }
-                >{ this.createAttendMessage() }</div>,
-            );
+                key="attend-button"
+                className="attend block"
+                { ...pointerHandlerPolyfill({
+                    onPointerDown: this.onAttendDown,
+                    onPointerLeave: this.onAttendUp,
+                    onPointerUp: this.onAttendUp,
+                }) }
+            >{ this.createAttendMessage() }</div>);
         }
 
         return ret;

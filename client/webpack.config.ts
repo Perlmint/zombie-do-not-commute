@@ -1,6 +1,7 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import path from "path";
+import webpack from "webpack";
 
 export default {
     devServer: {
@@ -47,6 +48,9 @@ export default {
             chunkFilename: "[id].css",
             filename: "[name].css",
         }),
+        new webpack.DefinePlugin({
+            SERVER_URL: process.env.SERVER_URL ? JSON.stringify(process.env.SERVER_URL) : "undefined",
+        }),
     ],
     resolve: {
         extensions: [
@@ -56,4 +60,5 @@ export default {
             ".json",
         ],
     },
+    target: "web",
 };
