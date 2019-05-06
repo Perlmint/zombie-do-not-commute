@@ -6,6 +6,7 @@ export default {
     devServer: {
         host: "0.0.0.0",
     },
+    devtool: "source-map",
     entry: "./src/index.tsx",
     module: {
         rules: [
