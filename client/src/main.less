@@ -1,3 +1,7 @@
+@growl-color: #00bf20;
+@message-color: #00bfb6;
+@button-color: #1d6ce4;
+
 html {
     height: 100%;
     touch-action: none;
@@ -13,14 +17,14 @@ body {
     -ms-user-select: none;
     user-select: none;
     overscroll-behavior: none;
-
+    
     > div {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    display: flex;
-    flex-direction: column-reverse;
-}
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        display: flex;
+        flex-direction: column-reverse;
+    }
 }
 
 .buttons-wrap {
@@ -34,11 +38,11 @@ body {
         padding: 0;
 
         > .block {
-            background: #00bf20;
+            background: @growl-color;
 
             &:before {
-                border-left-color: #00bf20 !important;
-                border-top-color: #00bf20 !important;
+                border-left-color: @growl-color !important;
+                border-top-color: @growl-color !important;
             }
         }
     }
@@ -55,11 +59,11 @@ body {
         mix-blend-mode: hard-light;
 
         > .block {
-            background: #00bfb6;
+            background: @message-color;
 
             &:before {
-                border-left-color: #00bfb6 !important;
-                border-top-color: #00bfb6 !important;
+                border-left-color: @message-color !important;
+                border-top-color: @message-color !important;
             }
         }
     }
@@ -84,7 +88,7 @@ div.block {
     min-height: min-content;
 
     &.attend {
-        background: #1d6ce4;
+        background: @button-color;
         color: #fff;
         cursor: pointer;
         margin-left: auto;
