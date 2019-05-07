@@ -247,25 +247,18 @@ class Main extends React.Component<{}, IState> {
     private renderButtonsArea() {
         const ret: JSX.Element[] = [];
         if (this.state.attend_down_at === undefined && this.state.commute_state === CommuteState.COMMUTED) {
-            ret.push(<div
-                key="growl-button"
-                id="growl-button"
-                className="block"
+            ret.push(<Balloon
+                key="growl-previw"
+                side={this.state.growl_down_at !== undefined ? BalloonSide.Right : BalloonSide.None}
+                msg={createGrowl(this.state.growl_down_at !== undefined ? this.state.growl_down_at : new Date())}
                 { ...pointerHandlerPolyfill({
                     onPointerDown: this.onGrowlDown,
                     onPointerLeave: this.onGrowlUp,
                     onPointerUp: this.onGrowlUp,
                 }) }
-            >그어어</div>);
-        }
-
-        if (this.state.growl_down_at !== undefined) {
-            ret.push(<Balloon
-                key="growl-previw"
-                side={BalloonSide.Right}
-                msg={createGrowl(this.state.growl_down_at)}
             />);
-        } else if (this.state.commute_state !== CommuteState.NO_MORE_COMMUTE) {
+        }
+        if (this.state.growl_down_at === undefined && this.state.commute_state !== CommuteState.NO_MORE_COMMUTE) {
             ret.push(<div
                 key="attend-button"
                 className="attend block"
