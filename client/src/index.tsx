@@ -7,10 +7,16 @@ import Balloon, { BalloonSide, IBalloonProps } from "./balloon";
 import { Spinner } from "./spinner";
 import { pointerHandlerPolyfill } from "./util";
 
+enum CommuteState {
+    SHOULD_COMMUTE,
+    COMMUTED,
+    NO_MORE_COMMUTE,
+}
+
 interface IState {
     messages: IBalloonProps[];
     growl_down_at?: Date;
-    attended: boolean;
+    commute_state: CommuteState;
     attend_down_at?: Date;
     intervalId?: any;
     intervalDummy: boolean;
@@ -30,7 +36,7 @@ class Main extends React.Component<{}, IState> {
     public constructor(props: {}, context?: any) {
         super(props, context);
         this.state = {
-            attended: false,
+            commute_state: CommuteState.SHOULD_COMMUTE,
             intervalDummy: false,
             messages: [],
         };
@@ -174,8 +180,17 @@ class Main extends React.Component<{}, IState> {
                     attend_down_at: {
                         $set: undefined,
                     },
-                    attended: {
-                        $apply: (v) => !v,
+                    commute_state: {
+                        $apply: (v) => {
+                            switch (v) {
+                                case CommuteState.SHOULD_COMMUTE:
+                                    return CommuteState.COMMUTED;
+                                case CommuteState.COMMUTED:
+                                    return CommuteState.NO_MORE_COMMUTE;
+                                case CommuteState.NO_MORE_COMMUTE:
+                                    return CommuteState.NO_MORE_COMMUTE;
+                            }
+                        },
                     },
                     intervalId: {
                         $set: undefined,
@@ -194,7 +209,7 @@ class Main extends React.Component<{}, IState> {
     }
 
     private createAttendMessage() {
-        let msg = !this.state.attended ? "출" : "퇴";
+        let msg = this.state.commute_state === CommuteState.SHOULD_COMMUTE ? "출" : "퇴";
         if (this.state.attend_down_at !== undefined) {
             const growl = createGrowl(this.state.attend_down_at);
             msg += growl;
@@ -231,7 +246,7 @@ class Main extends React.Component<{}, IState> {
 
     private renderButtonsArea() {
         const ret: JSX.Element[] = [];
-        if (this.state.attend_down_at === undefined && this.state.attended) {
+        if (this.state.attend_down_at === undefined && this.state.commute_state === CommuteState.COMMUTED) {
             ret.push(<div
                 key="growl-button"
                 id="growl-button"
@@ -250,7 +265,7 @@ class Main extends React.Component<{}, IState> {
                 side={BalloonSide.Right}
                 msg={createGrowl(this.state.growl_down_at)}
             />);
-        } else {
+        } else if (this.state.commute_state !== CommuteState.NO_MORE_COMMUTE) {
             ret.push(<div
                 key="attend-button"
                 className="attend block"
