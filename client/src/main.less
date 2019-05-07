@@ -66,9 +66,15 @@ body {
             background: @growl-color;
 
             &:before {
-                border-left-color: @growl-color !important;
                 border-top-color: @growl-color !important;
             }
+        }
+
+        .left > .block:before {
+            border-right-color: @growl-color !important;
+        }
+        .right > .block:before {
+            border-left-color: @growl-color !important;
         }
     }
 }
@@ -88,9 +94,14 @@ body {
             font-size: 0.8em;
 
             &:before {
-                border-left-color: @message-color !important;
                 border-top-color: @message-color !important;
             }
+        }
+        .left > .block:before {
+            border-right-color: @growl-color !important;
+        }
+        .right > .block:before {
+            border-left-color: @growl-color !important;
         }
     }
 
