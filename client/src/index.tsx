@@ -84,11 +84,20 @@ class Main extends React.Component<{}, IState> {
 
         try {
             const socket = new WebSocket(SERVER_URL);
-            this.setState((state) => update(state, {
-                socket: {
-                    $set: socket,
-                },
-            }));
+            socket.onopen = () => {
+                this.setState((state) => update(state, {
+                    socket: {
+                        $set: socket,
+                    },
+                }));
+            };
+            socket.onerror = () => {
+                this.setState((state) => update(state, {
+                    socket_err: {
+                        $set: "Unknown reason",
+                    },
+                }));
+            };
             socket.onmessage = this.onReceivceMessage;
             socket.onclose = () => this.disconnect();
         } catch (e) {
@@ -115,8 +124,8 @@ class Main extends React.Component<{}, IState> {
     private onReconnectClick = () => {
         this.connect();
     }
-    private onReceivceMessage(_: MessageEvent) {
-        // TODO: process message
+    private onReceivceMessage = (ev: MessageEvent) => {
+        this.pushMessage(ev.data, BalloonSide.Left);
     }
 
     private onGrowlDown = () => {
@@ -129,10 +138,8 @@ class Main extends React.Component<{}, IState> {
         if (this.state.growl_down_at !== undefined) {
             clearInterval(this.state.intervalId);
             const message = createGrowl(this.state.growl_down_at);
+            this.sendMessage(message);
             this.pushMessage(message, BalloonSide.Right);
-            if (SERVER_URL !== undefined) {
-                this.state.socket!.send(message);
-            }
             this.setState((state) => update(
                 state,
                 {
@@ -158,7 +165,9 @@ class Main extends React.Component<{}, IState> {
     private onAttendUp = () => {
         if (this.state.attend_down_at !== undefined) {
             clearInterval(this.state.intervalId);
-            this.pushMessage(this.createAttendMessage(), BalloonSide.Right);
+            const msg = this.createAttendMessage();
+            this.sendMessage(msg);
+            this.pushMessage(msg, BalloonSide.Right);
             this.setState((state) => update(
                 state,
                 {
@@ -202,6 +211,12 @@ class Main extends React.Component<{}, IState> {
                 $set: setInterval(this.onInterval, GROWL_INTERVAL),
             },
         }));
+    }
+
+    private sendMessage(msg: string) {
+        if (SERVER_URL !== undefined) {
+            this.state.socket!.send(msg);
+        }
     }
 
     private pushMessage(msg: string, side: BalloonSide) {
