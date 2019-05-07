@@ -56,8 +56,13 @@ body > div {
   background: #00bf20;
 }
 .buttons-wrap > .balloon > .block:before {
-  border-left-color: #00bf20 !important;
   border-top-color: #00bf20 !important;
+}
+.buttons-wrap > .balloon .left > .block:before {
+  border-right-color: #00bf20 !important;
+}
+.buttons-wrap > .balloon .right > .block:before {
+  border-left-color: #00bf20 !important;
 }
 .balloons-wrap {
   display: flex;
@@ -74,8 +79,13 @@ body > div {
   font-size: 0.8em;
 }
 .balloons-wrap .balloon > .block:before {
-  border-left-color: #00bfb6 !important;
   border-top-color: #00bfb6 !important;
+}
+.balloons-wrap .balloon .left > .block:before {
+  border-right-color: #00bf20 !important;
+}
+.balloons-wrap .balloon .right > .block:before {
+  border-left-color: #00bf20 !important;
 }
 .balloons-wrap:after {
   background: linear-gradient(#ffffff, rgba(255, 255, 255, 0));
@@ -154,13 +164,14 @@ div.block.attend {
   position: relative;
   width: 64px;
   height: 64px;
+  margin: auto;
 }
 .lds-grid div {
   position: absolute;
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: #fff;
+  background: black;
   animation: lds-grid 1.2s linear infinite;
 }
 .lds-grid div:nth-child(1) {
