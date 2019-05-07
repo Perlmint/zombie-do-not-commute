@@ -1,0 +1,22 @@
+{
+  "name": "zombie-do-not-commute-serverr",
+  "version": "0.1.0",
+  "description": "Zombie do not commute",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Perlmint/zombie-do-not-commute.git"
+  },
+  "author": "Saemi Park <2kindsofcs@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Perlmint/zombie-do-not-commute/issues"
+  },
+  "homepage": "https://github.com/Perlmint/zombie-do-not-commute#readme",
+  "dependencies": {
+    "ws": "^7.0.0"
+  }
+}
