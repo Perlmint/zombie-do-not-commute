@@ -51,18 +51,20 @@ body > div {
 }
 .buttons-wrap > .balloon {
   padding: 0;
+  flex: unset;
 }
 .buttons-wrap > .balloon > .block {
-  background: #00bf20;
+  background: #60CF5D;
+  cursor: pointer;
+  color: #fff;
 }
-.buttons-wrap > .balloon > .block:before {
-  border-top-color: #00bf20 !important;
+.buttons-wrap > .balloon.right > .block:before {
+  background: #60CF5D;
+  border-color: #60CF5D !important;
 }
-.buttons-wrap > .balloon .left > .block:before {
-  border-right-color: #00bf20 !important;
-}
-.buttons-wrap > .balloon .right > .block:before {
-  border-left-color: #00bf20 !important;
+.buttons-wrap > .balloon.right > .block:after {
+  background: white;
+  border-color: white !important;
 }
 .balloons-wrap {
   display: flex;
@@ -75,17 +77,27 @@ body > div {
   mix-blend-mode: hard-light;
 }
 .balloons-wrap .balloon > .block {
-  background: #00bfb6;
   font-size: 0.8em;
 }
-.balloons-wrap .balloon > .block:before {
-  border-top-color: #00bfb6 !important;
+.balloons-wrap .balloon > .block:after {
+  background: white;
+  border-color: white !important;
 }
-.balloons-wrap .balloon .left > .block:before {
-  border-right-color: #00bf20 !important;
+.balloons-wrap .balloon.right > .block {
+  background: #60CF5D;
+  color: #fff;
 }
-.balloons-wrap .balloon .right > .block:before {
-  border-left-color: #00bf20 !important;
+.balloons-wrap .balloon.right > .block:before {
+  background: #60CF5D;
+  border-color: #60CF5D !important;
+}
+.balloons-wrap .balloon.left > .block {
+  background: #E6E5EB;
+  color: #000;
+}
+.balloons-wrap .balloon.left > .block:before {
+  background: #E6E5EB;
+  border-color: #E6E5EB !important;
 }
 .balloons-wrap:after {
   background: linear-gradient(#ffffff, rgba(255, 255, 255, 0));
@@ -105,7 +117,7 @@ div.block {
   min-height: min-content;
 }
 div.block.attend {
-  background: #1d6ce4;
+  background: #53B2F8;
   color: #fff;
   cursor: pointer;
   margin-right: auto;
@@ -117,61 +129,66 @@ div.block.attend {
   min-height: min-content;
 }
 .balloon > .block {
-  color: #fff;
   position: relative;
   max-width: 50%;
+}
+.balloon > .block:before {
+  content: "";
+  width: 14px;
+  height: 0px;
+  position: absolute;
+  border: 12px solid transparent;
+  bottom: 0px;
+  z-index: -1;
+}
+.balloon > .block:after {
+  content: "";
+  width: 14px;
+  height: 0px;
+  position: absolute;
+  border: 12px solid transparent;
+  bottom: 0px;
 }
 .balloon.right {
   flex-direction: row-reverse;
 }
 .balloon.right > .block:before {
-  content: "";
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  right: -16px;
-  top: 0px;
+  right: -24px;
+  border-bottom-left-radius: 14px;
+}
+.balloon.right > .block:after {
+  right: -38px;
+  border-bottom-left-radius: 10px;
 }
 .balloon.left {
   flex-direction: row;
 }
 .balloon.left > .block:before {
-  content: "";
-  width: 0px;
-  height: 0px;
-  position: absolute;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 15px solid transparent;
-  border-bottom: 15px solid transparent;
-  left: -16px;
-  top: 0px;
+  left: -24px;
+  border-bottom-right-radius: 14px;
 }
-#growl-button {
-  background: #00bf20;
-  color: #fff;
-  margin-left: 0;
-  margin-right: 0;
-  cursor: pointer;
+.balloon.left > .block:after {
+  left: -38px;
+  border-bottom-right-radius: 10px;
 }
 
+.spinner-wrap {
+  margin: auto;
+  text-align: center;
+  color: #A8A8A8;
+}
 .lds-grid {
   display: inline-block;
   position: relative;
   width: 64px;
   height: 64px;
-  margin: auto;
 }
 .lds-grid div {
   position: absolute;
   width: 13px;
   height: 13px;
   border-radius: 50%;
-  background: black;
+  background: #A8A8A8;
   animation: lds-grid 1.2s linear infinite;
 }
 .lds-grid div:nth-child(1) {
