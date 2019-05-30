@@ -10,5 +10,15 @@
 			"path": "server"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"client": true,
+			"server": true,
+		}
+	}
 }
