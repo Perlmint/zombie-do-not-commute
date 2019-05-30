@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "react-static start",
     "build": "react-static build",
+    "publish": "gh-pages -d dist",
     "lint": "tslint --project tsconfig.json"
   },
   "repository": {
@@ -26,6 +27,7 @@
     "@types/react": "^16.8.16",
     "@types/react-dom": "^16.8.4",
     "css-loader": "^2.1.1",
+    "gh-pages": "^2.0.1",
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
