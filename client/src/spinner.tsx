@@ -1,4 +1,4 @@
-import "./spinner.less";
+import "./spinner.scss";
 
 import React from "react";
 

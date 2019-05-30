@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack-dev-server",
-    "build": "webpack -p",
+    "start": "react-static start",
+    "build": "react-static build",
     "lint": "tslint --project tsconfig.json"
   },
   "repository": {
@@ -30,6 +30,11 @@
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.6.0",
+    "react-hot-loader": "^4.8.5",
+    "react-static": "^7.0.10",
+    "react-static-plugin-sass": "^7.0.10",
+    "react-static-plugin-typescript": "^7.0.10",
+    "source-map-support": "^0.5.12",
     "style-loader": "^0.23.1",
     "ts-loader": "^5.4.5",
     "ts-node": "^8.1.0",
@@ -40,6 +45,8 @@
     "webpack-dev-server": "^3.3.1"
   },
   "dependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/runtime": "^7.4.4",
     "immutability-helper": "^3.0.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"

@@ -92,3 +92,5 @@ typings/
 
 # built result
 dist
+tmp
+artifacts

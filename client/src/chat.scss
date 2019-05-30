@@ -1,30 +1,19 @@
-@message-right-color: #60CF5D;
-@message-left-color: #E6E5EB;
-@button-color: #53B2F8;
+$message-right-color: #60CF5D;
+$message-left-color: #E6E5EB;
+$button-color: #53B2F8;
 
 html,
 body {
-  position: fixed;
-  overflow: hidden;
-}
-
-html {
-    height: 100%;
+    position: fixed;
+    overflow: hidden;
     touch-action: none;
 }
 
 body {
-    margin: 0;
-    height: 100%;
-    width: 100%;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
-    -khtml-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
     overscroll-behavior: none;
-    
+    width: 100%;
+    height: 100%;
+
     > div {
         width: 100%;
         height: 100%;
@@ -43,7 +32,6 @@ body {
     border-radius: 15px;
     padding: 10px 20px;
     font-weight: 900;
-    font-family: arial;
     min-height: min-content;
     background: #c73737;
     color: #fff;
@@ -65,7 +53,7 @@ body {
         flex: unset;
 
         > .block {
-            background: @message-right-color;
+            background: $message-right-color;
             cursor: pointer;
             color: #fff;
         }
@@ -73,8 +61,8 @@ body {
         &.right > .block {
 
             &:before {
-                background: @message-right-color;
-                border-color: @message-right-color !important;
+                background: $message-right-color;
+                border-color: $message-right-color !important;
             }
             
             &:after {
@@ -105,21 +93,21 @@ body {
         }
 
         &.right > .block {
-            background: @message-right-color;
+            background: $message-right-color;
             color: #fff;
 
             &:before {
-                background: @message-right-color;
-                border-color: @message-right-color !important;
+                background: $message-right-color;
+                border-color: $message-right-color !important;
             }
         }
         &.left > .block {
-            background: @message-left-color;
+            background: $message-left-color;
             color: #000;
 
             &:before {
-                background: @message-left-color;
-                border-color: @message-left-color !important;
+                background: $message-left-color;
+                border-color: $message-left-color !important;
             }
         }
     }
@@ -144,7 +132,7 @@ div.block {
     min-height: min-content;
 
     &.attend {
-        background: @button-color;
+        background: $button-color;
         color: #fff;
         cursor: pointer;
         margin-right: auto;
