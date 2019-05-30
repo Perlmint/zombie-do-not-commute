@@ -14,6 +14,10 @@ export default {
     getRoutes: async () => [{
         path: "/",
         template: "src/chat",
+        children: [{
+            path: "faq",
+            template: "src/faq",
+        }],
     }],
     plugins: [
         "react-static-plugin-sass",

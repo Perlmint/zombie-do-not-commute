@@ -1,0 +1,46 @@
+$q_color: #60CF5D;
+$a_color: #E6E5EB;
+$q_bg: rgb(248, 246, 250);
+
+#faq {
+    min-height: 100%;
+    width: 100%;
+
+    h1 {
+        text-align: center;
+    }
+
+    dl {
+        margin: 0 auto;
+        padding: 0 4ex;
+        max-width: 1024px;
+    }
+    dt, dd {
+        padding: 2ex;
+        &:before {
+            font-size: 3ex;
+        }
+    }
+    dt {
+        &:not(:first-child) {
+            margin-top: 4ex;
+        }
+
+        border-left: 1ex solid $q_color;
+        background-color: $q_bg;
+    
+        &:before {
+            content: "Q. ";
+            color: $q_color;
+        }
+    }
+    dd {
+        margin-left: 0;
+        border-left: 1ex solid $a_color;
+        &:before {
+            content: "A. ";
+            color: $a_color;
+        }
+    }
+}
+
