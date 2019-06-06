@@ -1,4 +1,51 @@
 const webSocket = require('ws');
+const express = require('express');
+const OAuth = require('oauth');
+const wss = new webSocket.Server({port: 8081});
+const session = require('express-session');
+const {consumer_key} = require('./config');
+const {consumer_secret} = require('./config');
+const {secret} = require('./config');
+
+
+const app = express();
+app.use(session({
+    secret: secret,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: true }
+  }))
+
+  app.listen(3000, function () {
+    console.log('Example app listening on port 3000!');
+});
+  
+
+app.get('/twitter_login', function(req, res) {
+    oa = new OAuth.OAuth(
+        'https://api.twitter.com/oauth/request_token',
+        'https://api.twitter.com/oauth/access_token',
+        consumer_key,
+        consumer_secret,
+        '1.0A',
+        null,
+        'HMAC-SHA1'
+      );
+    oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
+        if(error) {
+              console.log('error');
+               console.log(error);
+          }
+        else { 
+              // store the tokens in the session
+              req.session.oa = oa;
+              req.session.oauth_token = oauth_token;
+              req.session.oauth_token_secret = oauth_token_secret;
+              // redirect the user to authorize the token
+             res.redirect("https://api.twitter.com/oauth/authenticate?oauth_token="+oauth_token);
+        }
+      })
+})
 
 const wss = new webSocket.Server({port: 8081});
 
