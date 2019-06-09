@@ -3,6 +3,11 @@ import "./faq.scss";
 import React from "react";
 
 export default () => <div id="faq">
+    <div className="float_buttons">
+        <div>
+            <a href="/">채팅방으로</a>
+        </div>
+    </div>
     <h1>자주 물어보는 질문 (FAQ)</h1>
     <dl>
         <dt>왜죠?</dt>

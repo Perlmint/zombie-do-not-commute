@@ -49,3 +49,29 @@ $q_bg: rgb(248, 246, 250);
     }
 }
 
+$button-color: #53B2F8;
+
+.float_buttons {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    flex-direction: column;
+    margin: 0 2rem 2rem 0;
+
+    > div {
+        cursor: pointer;
+        background-color: $button-color;
+        color: white;
+        padding: 0.7rem;
+        border-radius: 0.6rem;
+
+        a {
+            text-decoration: none;
+            color: unset;
+
+            :visited {
+                color: unset;
+            }
+        }
+    }
+}
