@@ -40,6 +40,8 @@ $q_bg: rgb(248, 246, 250);
     dd {
         margin-left: 0;
         border-left: 0.5rem solid $a_color;
+        text-align: justify;
+        text-align-last: left;
         &:before {
             content: "A. ";
             color: $a_color;
