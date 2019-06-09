@@ -44,8 +44,8 @@ body {
     display: flex;
     flex-direction: row-reverse;
     z-index: 100;
-    padding-left: 1ex;
-    padding-right: 1ex;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     min-height: min-content;
 
     > .balloon {
@@ -84,7 +84,7 @@ body {
         mix-blend-mode: hard-light;
 
         > .block {
-            font-size: 0.8em;
+            font-size: 0.8rem;
 
             &:after {
                 background: white;

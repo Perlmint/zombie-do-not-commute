@@ -11,22 +11,24 @@ $q_bg: rgb(248, 246, 250);
     }
 
     dl {
-        margin: 0 auto;
-        padding: 0 4ex;
+        padding: 0 2rem;
         max-width: 1024px;
     }
     dt, dd {
-        padding: 2ex;
+        padding: 1rem;
+        line-height: 1.5;
+
         &:before {
-            font-size: 3ex;
+            font-size: 1.5rem;
+            line-height: 0;
         }
     }
     dt {
         &:not(:first-child) {
-            margin-top: 4ex;
+            margin-top: 2rem;
         }
 
-        border-left: 1ex solid $q_color;
+        border-left: 0.5rem solid $q_color;
         background-color: $q_bg;
     
         &:before {
@@ -36,7 +38,7 @@ $q_bg: rgb(248, 246, 250);
     }
     dd {
         margin-left: 0;
-        border-left: 1ex solid $a_color;
+        border-left: 0.5rem solid $a_color;
         &:before {
             content: "A. ";
             color: $a_color;
