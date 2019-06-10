@@ -1,4 +1,4 @@
 require("ts-node/register");
 module.exports = {
-    default: require("./static.config.ts").default
+    default: require("./static.config.tsx").default
 };
