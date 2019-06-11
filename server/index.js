@@ -20,17 +20,17 @@ app.use(session({
     console.log('Example app listening on port 3000!');
 });
   
+const oa = new OAuth.OAuth(
+    'https://api.twitter.com/oauth/request_token',
+    'https://api.twitter.com/oauth/access_token',
+    consumer_key,
+    consumer_secret,
+    '1.0A',
+    null,
+    'HMAC-SHA1'
+  );
 
 app.get('/twitter_login', function(req, res) {
-    oa = new OAuth.OAuth(
-        'https://api.twitter.com/oauth/request_token',
-        'https://api.twitter.com/oauth/access_token',
-        consumer_key,
-        consumer_secret,
-        '1.0A',
-        null,
-        'HMAC-SHA1'
-      );
     oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
         if(error) {
               console.log('error');
@@ -47,7 +47,36 @@ app.get('/twitter_login', function(req, res) {
       })
 })
 
-const wss = new webSocket.Server({port: 8081});
+app.get('/callback', function (request, response) {
+    const getOAuthRequestTokenCallback = function (error, oAuthAccessToken,
+                                                 oAuthAccessTokenSecret, results) {
+        if (error) {
+            console.log(error);
+            console.log('Error occured while getting access token');
+            return;
+        }
+
+        oa.get('https://api.twitter.com/1.1/account/verify_credentials.json',
+               oAuthAccessToken,
+               oAuthAccessTokenSecret,
+               function (error, twitterResponseData, result) {
+                   if (error) {
+                       console.log(error)
+                       return;
+                   }
+                    req.session.oauth_access_token = oauth_access_token;
+				    req.session.oauth_access_token_secret = oauth_access_token_secret;
+                    console.log(twitterResponseData);
+            });
+        // res.redirect('https://zombie.perlmint.app'); 이게 없어서 자동으로 리다이렉트 된다. 흠...
+    };
+
+    oa.getOAuthAccessToken(req.session.oauth_token, req.session.oauth_token_secret,
+                           req.param('oauth_verifier'),
+                           getOAuthRequestTokenCallback);
+    });
+
+
 
 // 웹소켓서버에 connection 이벤트가 일어나면 connection 함수를 실행해라
 wss.on('connection', function connection(ws) {
