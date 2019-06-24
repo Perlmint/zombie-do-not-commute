@@ -9,6 +9,8 @@ export enum BalloonSide {
 export interface IBalloonProps extends React.HTMLAttributes<HTMLDivElement> {
     msg: string;
     side: BalloonSide;
+    balloon_color?: string;
+    text_color?: string;
 }
 
 export default class Balloon extends React.Component<IBalloonProps> {
@@ -23,7 +25,15 @@ export default class Balloon extends React.Component<IBalloonProps> {
                 sideStr = "right";
                 break;
         }
-        return <div className={`balloon ${sideStr}`} {...rest} >
+        const style: React.StyleHTMLAttributes<HTMLDivElement> & any = {};
+        if (this.props.balloon_color) {
+            style["--balloon-color"] = this.props.balloon_color;
+        }
+        if (this.props.text_color) {
+            style["--text-color"] = this.props.text_color;
+        }
+
+        return <div className={`balloon ${sideStr}`} {...rest} style={style} >
             <div className="block">
                 { msg }
             </div>
