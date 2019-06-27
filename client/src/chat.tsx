@@ -7,6 +7,22 @@ import Balloon, { BalloonSide, IBalloonProps } from "./balloon";
 import { Spinner } from "./spinner";
 import { pointerHandlerPolyfill } from "./util";
 
+interface IColorData {
+    textColor: string;
+    balloonColor: string;
+}
+
+interface IMessageData extends IColorData {
+    tag: 'message';
+    message: string;
+}
+
+interface IInitData extends IColorData {
+    tag: 'colorData';
+}
+
+type Message = IMessageData | IInitData;
+
 enum CommuteState {
     SHOULD_COMMUTE,
     COMMUTED,
@@ -22,6 +38,8 @@ interface IState {
     intervalDummy: boolean;
     socket?: WebSocket;
     socket_err?: string;
+    balloon_color?: string;
+    text_color?: string;
 }
 
 const MESSAGE_COUNT = 30;
@@ -66,11 +84,18 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
             }
         }
 
+        const style: React.StyleHTMLAttributes<HTMLDivElement> & any = {};
+        if (this.state.balloon_color) {
+            style["--my-balloon-color"] = this.state.balloon_color;
+        }
+        if (this.state.text_color) {
+            style["--my-text-color"] = this.state.text_color;
+        }
         return <>
-            <div className="buttons-wrap" >
+            <div className="buttons-wrap" style={style}>
                 { this.renderButtonsArea() }
             </div>
-            <div className="balloons-wrap" >
+            <div className="balloons-wrap" style={style}>
                 { this.state.messages.map((prop, idx) => <Balloon key={idx} {...prop} />) }
             </div>
         </>;
@@ -133,7 +158,22 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
         this.connect();
     }
     private onReceivceMessage = (ev: MessageEvent) => {
-        this.pushMessage(ev.data, BalloonSide.Left);
+        const data = JSON.parse(ev.data) as Message;
+        switch (data.tag) {
+            case "colorData":
+                this.setState((state) => update(state, {
+                    balloon_color: {
+                        $set: data.balloonColor,
+                    },
+                    text_color: {
+                        $set: data.textColor,
+                    },
+                }));
+                break;
+            case "message":
+                this.pushMessage(data);
+                break;
+        }
     }
 
     private onGrowlDown = () => {
@@ -147,7 +187,7 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
             clearInterval(this.state.intervalId);
             const message = createGrowl(this.state.growl_down_at);
             this.sendMessage(message);
-            this.pushMessage(message, BalloonSide.Right);
+            this.pushMessage(message);
             this.setState((state) => update(
                 state,
                 {
@@ -175,7 +215,7 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
             clearInterval(this.state.intervalId);
             const msg = this.createAttendMessage();
             this.sendMessage(msg);
-            this.pushMessage(msg, BalloonSide.Right);
+            this.pushMessage(msg);
             this.setState((state) => update(
                 state,
                 {
@@ -236,12 +276,24 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
         }
     }
 
-    private pushMessage(msg: string, side: BalloonSide) {
+    private pushMessage(msg: string | IMessageData) {
+        let new_message: IBalloonProps;
+        if (typeof msg == "string") {
+            new_message = {
+                msg,
+                side: BalloonSide.Right,
+            };
+        } else {
+            new_message = {
+                msg: msg.message,
+                side: BalloonSide.Left,
+                text_color: msg.textColor,
+                balloon_color: msg.balloonColor,
+            };
+        }
         this.setState((state) => update(state, {
             messages: {
-                $set: [{
-                    msg, side,
-                }, ...state.messages.slice(0, MESSAGE_COUNT - 1)],
+                $set: [new_message, ...state.messages.slice(0, MESSAGE_COUNT - 1)],
             },
         }));
     }

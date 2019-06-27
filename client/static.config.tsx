@@ -1,3 +1,5 @@
+// tslint:disable-next-line: no-reference
+/// <reference path="./src/env.d.ts" />
 import React from "react";
 import { ReactStaticConfig } from "react-static";
 

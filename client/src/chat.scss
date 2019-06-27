@@ -53,16 +53,16 @@ body {
         flex: unset;
 
         > .block {
-            background: $message-right-color;
+            background: var(--my-balloon-color);
             cursor: pointer;
-            color: #fff;
+            color: var(--my-text-color);
         }
 
         &.right > .block {
 
             &:before {
-                background: $message-right-color;
-                border-color: $message-right-color !important;
+                background: var(--my-balloon-color);
+                border-color: var(--my-balloon-color) !important;
             }
             
             &:after {
@@ -93,21 +93,21 @@ body {
         }
 
         &.right > .block {
-            background: $message-right-color;
-            color: #fff;
+            background: var(--my-balloon-color);
+            color: var(--my-text-color);
 
             &:before {
-                background: $message-right-color;
-                border-color: $message-right-color !important;
+                background: var(--my-balloon-color);
+                border-color: var(--my-balloon-color) !important;
             }
         }
         &.left > .block {
-            background: $message-left-color;
-            color: #000;
+            background: var(--balloon-color);
+            color: var(--text-color);
 
             &:before {
-                background: $message-left-color;
-                border-color: $message-left-color !important;
+                background: var(--balloon-color);
+                border-color: var(--balloon-color) !important;
             }
         }
     }
