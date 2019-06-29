@@ -13,12 +13,12 @@ interface IColorData {
 }
 
 interface IMessageData extends IColorData {
-    tag: 'message';
+    tag: "message";
     message: string;
 }
 
 interface IInitData extends IColorData {
-    tag: 'colorData';
+    tag: "colorData";
 }
 
 type Message = IMessageData | IInitData;
@@ -277,14 +277,14 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
     }
 
     private pushMessage(msg: string | IMessageData) {
-        let new_message: IBalloonProps;
-        if (typeof msg == "string") {
-            new_message = {
+        let newMessage: IBalloonProps;
+        if (typeof msg === "string") {
+            newMessage = {
                 msg,
                 side: BalloonSide.Right,
             };
         } else {
-            new_message = {
+            newMessage = {
                 msg: msg.message,
                 side: BalloonSide.Left,
                 text_color: msg.textColor,
@@ -293,7 +293,7 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
         }
         this.setState((state) => update(state, {
             messages: {
-                $set: [new_message, ...state.messages.slice(0, MESSAGE_COUNT - 1)],
+                $set: [newMessage, ...state.messages.slice(0, MESSAGE_COUNT - 1)],
             },
         }));
     }
