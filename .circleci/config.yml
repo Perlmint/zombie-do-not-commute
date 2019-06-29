@@ -1,0 +1,39 @@
+version: 2
+jobs:
+  client-lint:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: install deps
+          command: |
+            cd client 
+            npm i
+      - run:
+          name: lint check
+          command: |
+            cd client
+            npm run lint
+  
+  client-build:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: install deps
+          command: |
+            cd client 
+            npm i
+      - run:
+          name: build
+          command: |
+            cd client
+            npm run build
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - client-lint
