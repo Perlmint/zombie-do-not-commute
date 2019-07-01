@@ -1,7 +1,7 @@
 const webSocket = require('ws');
+const http = require('http');
 const express = require('express');
 const OAuth = require('oauth');
-const wss = new webSocket.Server({port: 8081});
 const session = require('express-session');
 const config = require('config');
 
@@ -13,8 +13,11 @@ app.use(session({
   cookie: {secure: true},
 }));
 
-app.listen(3000, function() {
-  console.log('Example app listening on port 3000!');
+const server = http.createServer(app);
+const wss = new webSocket.Server({server});
+
+server.listen(config.get('port'), function() {
+  console.log(`listening on port ${config.get('port')}`);
 });
 const oa = new OAuth.OAuth(
     'https://api.twitter.com/oauth/request_token',
