@@ -32,8 +32,25 @@ jobs:
             cd client
             npm run build
 
+  server-lint:
+    docker:
+      - image: circleci/node:lts
+    steps:
+      - checkout
+      - run:
+          name: install deps
+          command: |
+            cd server 
+            npm i
+      - run:
+          name: lint check
+          command: |
+            cd server
+            npm run lint
+
 workflows:
   version: 2
   build_and_test:
     jobs:
       - client-lint
+      - server-lint
