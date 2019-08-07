@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "react-static start",
     "build": "react-static build",
-    "publish": "gh-pages -d dist",
+    "deploy": "gh-pages -d dist",
     "lint": "tslint --project tsconfig.json"
   },
   "repository": {
