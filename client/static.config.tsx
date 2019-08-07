@@ -1,11 +1,11 @@
 // tslint:disable-next-line: no-reference
 /// <reference path="./src/env.d.ts" />
 import React from "react";
-import { ReactStaticConfig } from "react-static";
+import { Route } from "react-static";
 
 // tslint:disable:object-literal-sort-keys
 
-const config: ReactStaticConfig<SiteData> = {
+const config: any = {
     entry: "index.tsx",
     paths: {
         root: process.cwd(),
@@ -14,19 +14,19 @@ const config: ReactStaticConfig<SiteData> = {
     getSiteData: () => ({
         SERVER_URL: process.env.SERVER_URL,
     }),
-    getRoutes: async () => [{
+    getRoutes: () => [{
         path: "/",
         template: "src/chat",
         children: [{
             path: "faq",
             template: "src/faq",
         }],
-    }],
+    }] as Route[],
     plugins: [
         "react-static-plugin-sass",
         ["react-static-plugin-typescript", { typeCheck: false }],
     ],
-    Document({Html, Head, Body, children}) {
+    Document({Html, Head, Body, children}: any) {
         return <Html>
             <Head>
                 <meta name="twitter:card" content="app" />
