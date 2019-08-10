@@ -4,6 +4,12 @@ const express = require('express');
 const OAuth = require('oauth');
 const session = require('express-session');
 const config = require('config');
+const redis = require('redis-mock');
+const bluebird = require('bluebird');
+
+// 콜백 지옥을 보기 싫으니 프로미스를 씁시다.
+bluebird.promisifyAll(redis);
+const client = redis.createClient();
 
 const app = express();
 app.use(session({
@@ -78,13 +84,16 @@ app.get('/callback', function(request, response) {
 });
 
 // 웹소켓서버에 connection 이벤트가 일어나면 connection 함수를 실행해라
-wss.on('connection', function connection(ws) {
+wss.on('connection', async function connection(ws, req) {
+  const userId = req.headers['zombie-id'];
+  const userState = await getUserState(userId);
   const colorData = colorMaker();
-  // 다른 포트로 넘겨주고 하는 것들은 이미 일어났을 것이다. 따라서 관심사가 아니다.
   ws.send(JSON.stringify({
-    tag: 'colorData',
-    ...colorData, // 이렇게 하면 colorData 안의 것들을 풀어써주는 것과 동일
+    tag: 'userData',
+    userState,
+    colorData,
   }));
+  // 다른 포트로 넘겨주고 하는 것들은 이미 일어났을 것이다. 따라서 관심사가 아니다.
   // 소켓으로 메세지가 오면 incoming 함수를 실행해라.
   // ws.send(message); 이건 메세지를 보내온 클라이언트에게 다시 보내주는 것
   ws.on('message', function incoming(message) {
@@ -101,6 +110,41 @@ wss.on('connection', function connection(ws) {
     });
   });
 });
+
+
+const userState = {notCommuted: 'NOT', commuted: 'ZOMBIE', gotHome: 'SLEEPING'};
+
+// 클라이언트에서 요청이 오면 (좀비서버 메인페이지) 상태를 돌려주는 함수
+// 일단 클라이언트가 자기 id를 알고 있다고 가정 (클라 아이디 받을거임)
+
+/**
+ * @param {string} id id
+ */
+async function getUserState(id) {
+  // bluebird를 써서 async await을 사용할 수 있게 되었고, get을 원하던 방식으로 사용할 수 있게 되었다.
+  // (get으로 바로 데이터를 받아오고 싶었음)
+  const data = await client.hgetallAsync(id);
+  if (data === null) {
+    return userState.notCommuted;
+  } else {
+    if (data.date == '오늘날짜문자열') {
+      return data.commuted;
+    } else {
+      return userState.notCommuted;
+    }
+  }
+}
+
+/**
+ * @param {string} id id
+ * @param {string} state desired state
+ */
+async function setUserState(id, state) {
+  await client.multi()
+      .hset(id, 'commuted', state)
+      .hset(id, 'date', '오늘날짜문자열')
+      .execAsync();
+}
 
 /**
  * @return {string}
