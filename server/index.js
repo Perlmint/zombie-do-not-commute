@@ -6,10 +6,11 @@ const session = require('express-session');
 const config = require('config');
 const redis = require('redis-mock');
 const bluebird = require('bluebird');
+const {getUserState} = require('./userState');
 
 // 콜백 지옥을 보기 싫으니 프로미스를 씁시다.
 bluebird.promisifyAll(redis);
-const client = redis.createClient();
+const redisClient = redis.createClient();
 
 const app = express();
 app.use(session({
@@ -86,7 +87,7 @@ app.get('/callback', function(request, response) {
 // 웹소켓서버에 connection 이벤트가 일어나면 connection 함수를 실행해라
 wss.on('connection', async function connection(ws, req) {
   const userId = req.headers['zombie-id'];
-  const userState = await getUserState(userId);
+  const userState = await getUserState(redisClient, userId);
   const colorData = colorMaker();
   ws.send(JSON.stringify({
     tag: 'userData',
@@ -111,40 +112,6 @@ wss.on('connection', async function connection(ws, req) {
   });
 });
 
-
-const userState = {notCommuted: 'NOT', commuted: 'ZOMBIE', gotHome: 'SLEEPING'};
-
-// 클라이언트에서 요청이 오면 (좀비서버 메인페이지) 상태를 돌려주는 함수
-// 일단 클라이언트가 자기 id를 알고 있다고 가정 (클라 아이디 받을거임)
-
-/**
- * @param {string} id id
- */
-async function getUserState(id) {
-  // bluebird를 써서 async await을 사용할 수 있게 되었고, get을 원하던 방식으로 사용할 수 있게 되었다.
-  // (get으로 바로 데이터를 받아오고 싶었음)
-  const data = await client.hgetallAsync(id);
-  if (data === null) {
-    return userState.notCommuted;
-  } else {
-    if (data.date == '오늘날짜문자열') {
-      return data.commuted;
-    } else {
-      return userState.notCommuted;
-    }
-  }
-}
-
-/**
- * @param {string} id id
- * @param {string} state desired state
- */
-async function setUserState(id, state) {
-  await client.multi()
-      .hset(id, 'commuted', state)
-      .hset(id, 'date', '오늘날짜문자열')
-      .execAsync();
-}
 
 /**
  * @return {string}
