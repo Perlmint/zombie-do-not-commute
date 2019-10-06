@@ -44,44 +44,41 @@ app.get('/twitter_login', function(req, res) {
     if (error) {
       console.log('error');
       console.log(error);
+      res.status(500);
     } else {
-      // store the tokens in the session
-      req.session.oa = oa;
-      req.session.oauth_token = oauthToken;
-      req.session.oauth_token_secret = oauthTokenSecret;
       // redirect the user to authorize the token
       res.redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' + oauthToken);
     }
+    res.end();
   });
 });
 
-app.get('/callback', function(request, response) {
-  const getOAuthRequestTokenCallback = function(error, oAuthAccessToken,
+app.get('/callback', function(req, res, next) {
+  oa.getOAuthRequestToken(function(err, oAuthToken, oAuthTokenSecret, results) {
+    const getOAuthRequestTokenCallback = function(err, oAuthAccessToken,
       oAuthAccessTokenSecret, results) {
-    if (error) {
-      console.error(error);
+      if (err) {
+        console.log(err);
+        res.end(JSON.stringify({
+          message: 'Error occured while getting access token',
+          error: err,
+        }));
       return;
     }
 
-    oa.get('https://api.twitter.com/1.1/account/verify_credentials.json',
-        oAuthAccessToken,
-        oAuthAccessTokenSecret,
-        function(error, twitterResponseData, result) {
-          if (error) {
-            console.log(error);
-            return;
-          }
-          req.session.oauth_access_token = oAuthAccessToken;
-          req.session.oauth_access_token_secret = oAuthAccessTokenSecret;
-          console.log(twitterResponseData);
-        });
-    // res.redirect('https://zombie.perlmint.app'); 이게 없어서 자동으로 리다이렉트 된다. 흠...
+      req.session.oa = oa;
+      req.session.oauth_token = oAuthAccessToken;
+      req.session.oauth_token_secret = oAuthAccessTokenSecret;
+      // '/' is for development.
+      // TODO: it should have a proper url later.
+      res.redirect('/');
+      next();
   };
 
-  oa.getOAuthAccessToken(req.session.oauth_token,
-      req.session.oauth_token_secret,
-      req.param('oauth_verifier'),
+    oa.getOAuthAccessToken(req.query.oauth_token, oAuthTokenSecret,
+        req.query.oauth_verifier,
       getOAuthRequestTokenCallback);
+});
 });
 
 // 웹소켓서버에 connection 이벤트가 일어나면 connection 함수를 실행해라
