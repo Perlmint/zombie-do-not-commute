@@ -7,18 +7,20 @@ const config = require('config');
 const redis = require('redis-mock');
 const bluebird = require('bluebird');
 const {getUserState} = require('./userState');
+const {setUserTextColor} = require('./userState');
+const {getUserTextColor} = require('./userState');
 
 // 콜백 지옥을 보기 싫으니 프로미스를 씁시다.
 bluebird.promisifyAll(redis);
 const redisClient = redis.createClient();
 
-const app = express();
-app.use(session({
+const sessionStore = new session.MemoryStore();
+const sessionHandler = session({
   secret: config.get('secret'),
-  resave: false,
-  saveUninitialized: true,
-  cookie: {secure: true},
-}));
+  store: sessionStore,
+});
+const app = express();
+app.use(sessionHandler);
 
 const server = http.createServer(app);
 const wss = new webSocket.Server({server});
@@ -69,6 +71,20 @@ app.get('/callback', function(req, res, next) {
       req.session.oa = oa;
       req.session.oauth_token = oAuthAccessToken;
       req.session.oauth_token_secret = oAuthAccessTokenSecret;
+
+      oa.get('https://api.twitter.com/1.1/account/verify_credentials.json',
+          oAuthAccessToken,
+          oAuthAccessTokenSecret,
+          function(error, twitterResponseData, result) {
+            if (error) {
+              console.log(error);
+              res.end(JSON.stringify(error));
+              return;
+            }
+            req.session.userId = JSON.parse(twitterResponseData).id_str;
+          });
+
+
       // '/' is for development.
       // TODO: it should have a proper url later.
       res.redirect('/');
@@ -81,11 +97,22 @@ app.get('/callback', function(req, res, next) {
 });
 });
 
+
 // 웹소켓서버에 connection 이벤트가 일어나면 connection 함수를 실행해라
 wss.on('connection', async function connection(ws, req) {
-  const userId = req.headers['zombie-id'];
-  const userState = await getUserState(redisClient, userId);
-  const colorData = colorMaker();
+  sessionHandler(req, {}, async (e) => {
+    // 트위터 로그인을 하지 않으면 일단 접속 종료.
+    if (req.session.oauth_token == null) {
+      // TODO: 트위터 로그인 페이지로 리다이렉션 해줘야 함.
+      ws.close();
+    }
+    const userId = req.session.userId;
+    const userState = await getUserState(redisClient, userId, new Date());
+    let colorData = await getUserTextColor(redisClient, userId);
+    if (colorData == null) {
+      colorData = colorMaker();
+      setUserTextColor(redisClient, userId, colorData);
+    }
   ws.send(JSON.stringify({
     tag: 'userData',
     userState,

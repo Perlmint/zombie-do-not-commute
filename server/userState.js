@@ -32,16 +32,48 @@ async function getUserState(redis, id, dateObject) {
  */
 async function setUserState(redis, id, state, dateObject) {
   await redis.multi()
-      .hset(id, 'commuted', state)
+      .hset(id, 'commuted', state) // value 자체가 key-value(들)인 것
       .hset(id, 'date', dateToString(dateObject))
       .execAsync();
+}
+
+/**
+ * @param {String} accessToken
+ */
+async function setUserToken(redis, accessToken) {
+  await redis.set(accessToken, '');
+  console.log(accessToken);
 }
 
 module.exports = {
   userState,
   getUserState,
   setUserState,
+  setUserToken,
+  setUserTextColor,
+  getUserTextColor,
 };
+
+/**
+ * @param {string} id
+ * @param {object} colorData 
+ */
+async function setUserTextColor(redis, id, colorData) {
+  await redis.hset(id, 'colors', JSON.stringify(colorData));
+}
+
+/** 
+ * @param {string} id
+ */
+async function getUserTextColor(redis, id) {
+  const data = await redis.hgetallAsync(id);
+  if (data == null) {
+    return null;
+  } else {
+    return JSON.parse(data.colors);
+  }
+}
+
 
 /**
  * 8자리 연월일 스트링을 반환합니다.(yyyyMMdd)
