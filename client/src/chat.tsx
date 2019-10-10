@@ -17,16 +17,23 @@ interface IMessageData extends IColorData {
     message: string;
 }
 
-interface IInitData extends IColorData {
-    tag: "colorData";
+interface IMyMessageData {
+    tag: "myMessage";
+    message: string;
 }
 
-type Message = IMessageData | IInitData;
+interface IInitData {
+    tag: "userData";
+    userState: CommuteState;
+    colorData: IColorData;
+}
+
+type Message = IMessageData | IMyMessageData | IInitData;
 
 enum CommuteState {
-    SHOULD_COMMUTE,
-    COMMUTED,
-    NO_MORE_COMMUTE,
+    SHOULD_COMMUTE = "NOT",
+    COMMUTED = "ZOMBIE",
+    NO_MORE_COMMUTE = "SLEEPING",
 }
 
 interface IState {
@@ -160,19 +167,23 @@ class ChatImpl extends React.Component<{SERVER_URL?: string}, IState> {
     private onReceivceMessage = (ev: MessageEvent) => {
         const data = JSON.parse(ev.data) as Message;
         switch (data.tag) {
-            case "colorData":
+            case "userData":
                 this.setState((state) => update(state, {
                     balloon_color: {
-                        $set: data.balloonColor,
+                        $set: data.colorData.balloonColor,
                     },
                     text_color: {
-                        $set: data.textColor,
+                        $set: data.colorData.textColor,
                     },
                 }));
                 break;
             case "message":
                 this.pushMessage(data);
                 break;
+            case "myMessage":
+                this.pushMessage(data.message);
+                break;
+
         }
     }
 
