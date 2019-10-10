@@ -82,13 +82,11 @@ app.get('/callback', function(req, res, next) {
               return;
             }
             req.session.userId = JSON.parse(twitterResponseData).id_str;
-          });
-
-
       // '/' is for development.
       // TODO: it should have a proper url later.
       res.redirect('/');
       next();
+          });
   };
 
     oa.getOAuthAccessToken(req.query.oauth_token, oAuthTokenSecret,
@@ -97,6 +95,7 @@ app.get('/callback', function(req, res, next) {
 });
 });
 
+const socketData = {};
 
 // 웹소켓서버에 connection 이벤트가 일어나면 connection 함수를 실행해라
 wss.on('connection', async function connection(ws, req) {
@@ -107,6 +106,17 @@ wss.on('connection', async function connection(ws, req) {
       ws.close();
     }
     const userId = req.session.userId;
+    if (socketData[userId] === undefined) {
+      socketData[userId] = [];
+    }
+    socketData[userId].push(ws);
+    ws.on('close', () => {
+      const idx = socketData[userId].indexOf(ws);
+      if (idx !== -1) {
+        socketData[userId].splice(idx, 1);
+      }
+    });
+
     const userState = await getUserState(redisClient, userId, new Date());
     let colorData = await getUserTextColor(redisClient, userId);
     if (colorData == null) {
@@ -125,11 +135,19 @@ wss.on('connection', async function connection(ws, req) {
     // 메세지를 보내온 클라이언트를 제외한 다른 클라이언트에게 보여야 하므로
     wss.clients.forEach(function each(client) {
       // 보내온 클라이언트 제외 and 받을 수 있는 상태라면
-      if (client !== ws && client.readyState === webSocket.OPEN) {
+        if (client.readyState !== webSocket.OPEN) {
+          return;
+        }
+        if (!socketData[userId].includes(client)) {
         client.send(JSON.stringify({
           tag: 'message',
           message,
-          ...colorData,
+            ...colorData, // key-value를 그대로 풀어서 넣어주는 것
+          }));
+        } else if (client !== ws) {
+          client.send(JSON.stringify({
+            tag: 'myMessage',
+            message,
         }));
       }
     });
